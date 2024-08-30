@@ -9,17 +9,17 @@ I recently obtained these [Pimoroni](https://shop.pimoroni.com) RP2040 "Plasma" 
 - [Plasma Stick 2040 W](https://shop.pimoroni.com/products/plasma-stick-2040-w?variant=40359072301139)
 - [Plasma 2040](https://shop.pimoroni.com/products/plasma-2040?variant=39410354847827)
 
-Prior to this I'd only used ESP32-based boards for programmable LED projects. Since I'd already written code using the Arduino framework and FastLED library for ESP32, I wanted to try using the same development environment for RP2040 (as opposed to using Raspberrry Pi Pico SDK and Pimoroni libraries). This simple project was what I wrote to confirm this was possible.
+Prior to this I'd only used ESP32-based boards for programmable LED projects. Since I'd already written code using the Arduino framework and FastLED library for ESP32, I wanted to try using the same development environment for RP2040 (as opposed to using Raspberrry Pi Pico SDK and Pimoroni libraries). This simple project is what I wrote to confirm this was possible.
 
-I am sharing the project and these notes in case it helps anyone else in a similar situation. Familiarity with VSCode, PlatformIO, Arduino framework and FastLED is assumed, but I have documented several things I learnt when working with RP2040-based boards in this environment that were not obvious to me when I first did this.
+I am sharing the project and these notes in case it helps anyone else in a similar situation. Familiarity with VS Code, PlatformIO, Arduino framework and FastLED is assumed, but I have documented several things I learnt when working with RP2040-based boards in this environment that were not obvious to me when I first did this.
 
 ## Prerequisites for Windows
 
-I used Visual Studio Code on Windows 11 with the PlatformIO extension for this project. This requires the following to be installed:
+I used VS Code on Windows 11 with the PlatformIO extension for this project. This requires the following to be installed:
 
 - [Git for Windows](https://gitforwindows.org/)
 - [Visual Studio Code](https://code.visualstudio.com/)
-- [PlatformIO IDE extension for VSCode](https://platformio.org/install/ide?install=vscode)
+- [PlatformIO IDE extension for VS Code](https://platformio.org/install/ide?install=vscode)
 
 Before continuing, you must enable long filenames in both Windows and Git to avoid installation issues with Arduino-Pico:
 
@@ -39,7 +39,11 @@ This enables use of some Arduino libraries such as FastLED that also have RP2040
 
 - [FastLED](https://fastled.io/)
 
-You can get PlatformIO to install the core, platform and library by simply opening the example project in VSCode and building it. The required components will be automatically downloaded and installed by PlatformIO. Note that downloading and installation will take some time to complete.
+PlatformIO should automatically download and install the core, platform and library when you first open the project folder in VS Code. 
+
+If this does not happen automatically when you open the project folder then try building the project, as that should also make PlatformIO download and install all required components.
+
+Note that downloading and installing these components will take some time to complete.
 
 ## Settings in platformio.ini
 
@@ -74,11 +78,11 @@ build_flags =
 
 ## Modifying sample code for your hardware
 
-Please review the values of the preprocessor definitions at the top of `main.cpp` and adjust accordingly for your board and LEDs before deploying the firmware to your hardware. The example values work with the [5m LED wire](https://shop.pimoroni.com/products/5m-flexible-rgb-led-wire-50-rgb-leds-aka-neopixel-ws2812-sk6812?variant=40384556171347) used to test this project.
+Please review the values of the preprocessor definitions at the top of `main.cpp` and adjust accordingly for your board and LEDs before deploying the firmware to your board. The example values work with the [Pimoroni 5m LED wire](https://shop.pimoroni.com/products/5m-flexible-rgb-led-wire-50-rgb-leds-aka-neopixel-ws2812-sk6812?variant=40384556171347) used to test this project.
 
 ## Uploading firmware
 
-Uploading firmware to RP2040 works differently compared to ESP32, though once everything is configured correctly the process to upload from PlatformIO in VSCode is the same for both.
+Uploading firmware to RP2040 works differently compared to ESP32, though once everything is configured correctly the process to upload from PlatformIO in VS Code is the same for both.
 
 ### Uploading first build
 
@@ -92,9 +96,13 @@ Your first build will have to be uploaded manually if alternative firmware (e.g.
 
 ### Uploading subsequent builds
 
-Once you have uploaded the firmware for the first time by copying the .u2f file, you should then be able to upload subsequent builds directly from VSCode/PlatformIO. However to do this you may need to install USB drivers for the board when it is bootloader mode:
+Once you have uploaded the firmware for the first time by copying the .u2f file, you should then be able to upload subsequent builds directly from VS Code/PlatformIO. However to do this you may need to install USB drivers for the board when it is bootloader mode:
 
 1. Enter bootloader mode as before
-2. Use [Zadig](https://zadig.akeo.ie/) to install driver for "RP2 Boot (Interface 1)" while device is in bootloader mode
-3. I used "WinUSB" as the driver which worked with both types of RP2040 boards that I currently have
-4. Reset or power cycle board and confirm that PlatformIO commands in VSCode such as "Upload" and "Upload and Monitor" now work
+2. Use [Zadig](https://zadig.akeo.ie/) to install required driver for "RP2 Boot (Interface 1)"
+    * Select "RP2 Boot (Interface 1)" from drop-down list in Zadig which by default only lists devices with no drivers
+    * Current driver is shown on left which should be "NONE" if you have not previously installed driver
+    * Driver to install is shown on right, default selection is "WinUSB" which worked for me with both boards
+    * Click on "Install Driver" to start installation - this can take a while
+    * Refer to [Zadig on-line help](https://github.com/pbatard/libwdi/wiki/Zadig) for more information
+3. Reset or power cycle board and confirm that PlatformIO commands in VS Code such as "Upload" and "Upload and Monitor" now work
